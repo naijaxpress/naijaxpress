@@ -1,0 +1,199 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naija XPress - Your Source for Naija & Global News</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #10b981; /* Emerald green background */
+        }
+    </style>
+</head>
+<body class="text-gray-800 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-emerald-600">Naija XPress</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#home" class="text-gray-600 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="#about" class="text-gray-600 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">About</a>
+                    <a href="#blog" class="text-gray-600 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">Blog</a>
+                    <a href="#contact" class="text-gray-600 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-extrabold text-white sm:text-5xl">
+                Welcome to Naija XPress
+            </h2>
+            <p class="mt-4 text-xl text-gray-200">
+                Your world-class source for Naija and global news, music, comedy, politics, business, and culture. Discover fast updates, authentic stories, and unfiltered insights.
+            </p>
+            <div class="mt-10">
+                <a href="#blog" class="inline-block bg-emerald-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-emerald-700">
+                    Explore Our Blog
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-gray-900">About Naija XPress</h2>
+            <p class="mt-4 text-lg text-gray-600">
+                Naija XPress is a world-class platform dedicated to delivering authentic, unfiltered stories from Nigeria and beyond. Covering news, music, comedy, politics, business, and culture, we provide fast updates that resonate globally.
+            </p>
+            <p class="mt-4 text-lg text-gray-600">
+                Our mission is to connect communities through compelling narratives. We strive to amplify voices, share diverse perspectives, and foster unity through storytelling that transcends borders. Whether you're here for the latest in Nigerian entertainment, global business trends, or political insights, Naija XPress is your trusted source.
+            </p>
+            <p class="mt-4 text-lg text-gray-600">
+                Want to promote your content or collaborate further? DM us to explore exciting opportunities. We’re passionate about building partnerships that celebrate creativity and culture.
+            </p>
+        </div>
+    </section>
+
+    <!-- Blog Section with Long Bio -->
+    <section id="blog" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-white">Our Story</h2>
+            <div class="mt-6 text-lg text-gray-200">
+                <p class="mb-4">
+                    Naija XPress was born from a deep love for storytelling and a vision to bridge cultures through authentic, unfiltered narratives. Founded in the heart of Nigeria, our platform has grown into a global beacon for those seeking fast, reliable, and vibrant updates on news, music, comedy, politics, business, and culture. We are more than a news outlet; we are a movement that celebrates the richness of Nigerian heritage while embracing the diversity of the world.
+                </p>
+                <p class="mb-4">
+                    Our journey began with a simple idea: to create a space where stories matter. From the bustling streets of Lagos to the global diaspora, we’ve made it our mission to capture the pulse of Nigeria and share it with the world. Whether it’s the latest Afrobeats hit, a breakthrough in African tech, or a comedian’s take on daily life, Naija XPress delivers content that informs, entertains, and inspires.
+                </p>
+                <p class="mb-4">
+                    At Naija XPress, we believe in the power of connection. Our team of passionate writers, editors, and creators work tirelessly to bring you stories that resonate. We cover the triumphs and challenges of Nigerian politics, the innovation driving African businesses, and the cultural moments that define our shared humanity. Our platform is a melting pot of ideas, where global perspectives meet local authenticity.
+                </p>
+                <p class="mb-4">
+                    What sets us apart is our commitment to unity and inclusivity. We reject hate speech, discrimination, and bias in all forms, focusing instead on content that educates and uplifts. Our readers come from all walks of life, and we’re proud to serve a global audience that values truth, creativity, and community. Every story we share is crafted with care, ensuring it reflects the vibrancy and resilience of the people we represent.
+                </p>
+                <p class="mb-4">
+                    Beyond news, Naija XPress is a hub for collaboration. We partner with artists, entrepreneurs, and creators to amplify their voices and showcase their work. From music videos to thought-provoking op-eds, our platform is a stage for the bold and the visionary. If you have a story to tell or a project to promote, Naija XPress is your partner in making it happen.
+                </p>
+                <p class="mb-4">
+                    As we look to the future, our vision remains clear: to be the world’s most trusted source for Nigerian and global stories. We’re excited to continue growing, connecting, and celebrating the moments that shape our world. Join us on this journey, and let’s tell the stories that matter—together.
+                </p>
+            </div>
+            <!-- News Videos -->
+            <h3 class="mt-10 text-2xl font-bold text-white">Latest News Videos</h3>
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Video placeholders (YouTube embeds for Nigerian news) -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/VIDEO_ID_1" title="Nigerian News Update" frameborder="0" allowfullscreen></iframe>
+                    <div class="p-4">
+                        <p class="text-gray-600">Latest Nigerian News Update (Placeholder)</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/VIDEO_ID_2" title="Global News Highlight" frameborder="0" allowfullscreen></iframe>
+                    <div class="p-4">
+                        <p class="text-gray-600">Global News Highlight (Placeholder)</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/VIDEO_ID_3" title="Cultural Spotlight" frameborder="0" allowfullscreen></iframe>
+                    <div class="p-4">
+                        <p class="text-gray-600">Cultural Spotlight (Placeholder)</p>
+                    </div>
+                </div>
+            </div>
+            <p class="mt-4 text-gray-200">
+                Note: Video content is sourced from reputable news outlets. For media credit or removal requests, please contact us at naijaxpress@outlook.com.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-gray-900">Get in Touch</h2>
+            <p class="mt-4 text-lg text-gray-600">
+                Have a story, promotion idea, or just want to connect further? We’re here to engage and collaborate.
+            </p>
+            <div class="mt-6">
+                <p class="text-lg text-gray-600">
+                    <strong>Email:</strong> <a href="mailto:naijaxpress@outlook.com" class="text-emerald-600 hover:underline">naijaxpress@outlook.com</a>
+                </p>
+                <p class="mt-4 text-lg text-gray-600">
+                    Reach out for inquiries or to discuss exciting opportunities. We’re excited to hear from you!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-400">
+                Disclaimer: Naija XPress is committed to unity and does not support hate speech, discrimination, or cultural bias. Our content is shared for informational and educational purposes only. For media credit or removal requests, please contact us directly.
+            </p>
+            <p class="mt-2 text-gray-400">
+                © 2025 Naija XPress. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
